@@ -24,7 +24,6 @@ curr_image = None
 clean_output = None
 digit_list = None
 digit_image = None
-model = None
 return_value = None
 input_image = None
 orig_image = None
@@ -34,7 +33,6 @@ def walk(inp):
     global clean_output
     global digit_list
     global digit_image
-    global model
     global return_value
     global input_image
     orig_image = inp
@@ -136,7 +134,6 @@ def position_image(im):
                 output[i-round(x_sum/count)][j-round(y_sum/count)] = 1
     return np.array(output)
 def neural_network(inp):
-    global model
     global return_value
     output = inp.copy()
     output = convert_thin(output)
