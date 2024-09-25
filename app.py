@@ -207,34 +207,33 @@ def connected(node):
         return []
     
 def main():
-    st.title("Drawing Pad and Image Processing")
+    st.title("Image Fetch and Display")
 
-    # Create a drawing pad
-    canvas_result = st.canvas(
-        fill_color="white",  # Background color of the canvas
-        stroke_color="black",  # Drawing color
-        stroke_width=3,  # Width of the stroke
-        height=300,
-        width=500,
-        drawing_mode="freedraw",  # Allow free drawing
-        key="canvas"
-    )
+    # Default image URL
+    default_url = "https://raw.githubusercontent.com/SwastikMajumder/notebook_1/refs/heads/main/image.jpg"
+    
+    # Input field for the image URL with a default value
+    image_url = st.text_input("Enter the image URL:", value=default_url)
 
-    if st.button("Process Image"):
-        if canvas_result is not None:
-            # Convert the drawing to an image
-            img_data = canvas_result.image_data  # (height, width, 4)
-            if img_data is not None:
-                # Convert to OpenCV format
-                image = cv2.cvtColor(np.array(img_data), cv2.COLOR_RGBA2BGR)
-                # Process the image with the display function
-                output = display(image)
+    if image_url:
+        try:
+            # Fetch the image from the URL
+            response = requests.get(image_url)
+            response.raise_for_status()  # Check for HTTP errors
 
-                # Display the original and processed images using OpenCV
-                st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
-                st.image(output, caption='Processed Image', use_column_width=True)
-        else:
-            st.warning("Please draw something before processing.")
+            # Convert the response content to a NumPy array
+            file_bytes = np.asarray(bytearray(response.content), dtype=np.uint8)
+            image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+
+            # Process the image with the display function
+            output = display(image)
+
+            # Display the original and processed images using OpenCV
+            st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
+            st.image(output, caption='Processed Image', use_column_width=True)
+
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
