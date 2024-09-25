@@ -27,7 +27,7 @@ model = None
 return_value = None
 input_image = None
 orig_image = None
-def run(inp):
+def walk(inp):
     global curr_image
     global orig_image
     global clean_output
@@ -78,7 +78,7 @@ def run(inp):
     return return_value
 def display(inp):
     global orig_image
-    result = run(inp)
+    result = walk(inp)
     size = int(len(result)/2)
     copy_image = orig_image.copy()
     for i in range(size):
