@@ -217,8 +217,8 @@ def main():
 
     if image_url:
         try:
-            # Fetch the image from the URL
-            response = requests.get(image_url)
+            # Fetch the image from the URL with a timeout
+            response = requests.get(image_url, timeout=5)  # Set timeout to 5 seconds
             response.raise_for_status()  # Check for HTTP errors
 
             # Convert the response content to a NumPy array
@@ -232,8 +232,8 @@ def main():
             st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
             st.image(output, caption='Processed Image', use_column_width=True)
 
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+        except requests.exceptions.RequestException as e:
+            st.error(f"An error occurred while fetching the image: {e}")
 
 if __name__ == "__main__":
     main()
