@@ -1,16 +1,17 @@
+import base64
 import cv2
 import numpy as np
 import streamlit as st
 from vipas import model
 from vipas.exceptions import UnauthorizedException, NotFoundException
-import base64
+
 
 def predict_image(input_data):
     input_data = base64.b64encode(input_data.tobytes()).decode('utf-8')
     model_id = "mdl-7c64gcr10cmb0"
     vps_model_client = model.ModelClient()
     response = vps_model_client.predict(model_id=model_id, input_data=input_data)
-    return np.frombuffer(base64.b64decode(response), dtype=np.float32).reshape(1, 784)
+    return np.frombuffer(base64.b64decode(response))
 
 thin_arr = [[ [0,0,0],[-1,1,-1],[1,1,1] ],\
             [ [-1,0,0],[1,1,0],[-1,1,-1] ],\
@@ -27,7 +28,7 @@ digit_image = None
 return_value = None
 input_image = None
 orig_image = None
-def walk(inp):
+def run(inp):
     global curr_image
     global orig_image
     global clean_output
@@ -77,7 +78,7 @@ def walk(inp):
     return return_value
 def display(inp):
     global orig_image
-    result = walk(inp)
+    result = run(inp)
     size = int(len(result)/2)
     copy_image = orig_image.copy()
     for i in range(size):
@@ -140,7 +141,6 @@ def neural_network(inp):
     output = position_image(output)
     output = output.reshape((1,784))
     result = predict_image(output)
-    result = result[0]
     best = -1
     index = 0
     for i in range(10):
@@ -205,7 +205,7 @@ def connected(node):
         return val
     else:
         return []
-
+    
 def main():
     st.title("Image Upload and Display")
 
