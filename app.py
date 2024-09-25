@@ -3,6 +3,7 @@ import numpy as np
 import streamlit as st
 from vipas import model
 from vipas.exceptions import UnauthorizedException, NotFoundException
+import base64
 
 def predict_image(input_data):
     input_data = base64.b64encode(input_data.tobytes()).decode('utf-8')
