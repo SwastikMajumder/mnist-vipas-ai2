@@ -207,22 +207,34 @@ def connected(node):
         return []
     
 def main():
-    st.title("Image Upload and Display")
+    st.title("Drawing Pad and Image Processing")
 
-    # Uploading an image file
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    # Create a drawing pad
+    canvas_result = st.canvas(
+        fill_color="white",  # Background color of the canvas
+        stroke_color="black",  # Drawing color
+        stroke_width=3,  # Width of the stroke
+        height=300,
+        width=500,
+        drawing_mode="freedraw",  # Allow free drawing
+        key="canvas"
+    )
 
-    if uploaded_file is not None:
-        # Read the image using OpenCV
-        file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-        image = cv2.imdecode(file_bytes, 1)
+    if st.button("Process Image"):
+        if canvas_result is not None:
+            # Convert the drawing to an image
+            img_data = canvas_result.image_data  # (height, width, 4)
+            if img_data is not None:
+                # Convert to OpenCV format
+                image = cv2.cvtColor(np.array(img_data), cv2.COLOR_RGBA2BGR)
+                # Process the image with the display function
+                output = display(image)
 
-        # Process the image with the display function
-        output = display(image)
-
-        # Display the original and processed images using OpenCV
-        st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
-        st.image(output, caption='Processed Image', use_column_width=True)
+                # Display the original and processed images using OpenCV
+                st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
+                st.image(output, caption='Processed Image', use_column_width=True)
+        else:
+            st.warning("Please draw something before processing.")
 
 if __name__ == "__main__":
     main()
