@@ -1,4 +1,3 @@
-import requests
 import base64
 import cv2
 import numpy as np
@@ -208,33 +207,22 @@ def connected(node):
         return []
     
 def main():
-    st.title("Image Fetch and Display")
+    st.title("Digit Recongnization")
 
-    # Default image URL
-    default_url = "https://raw.githubusercontent.com/SwastikMajumder/notebook_1/refs/heads/main/image.jpg"
-    
-    # Input field for the image URL with a default value
-    image_url = st.text_input("Enter the image URL:", value=default_url)
+    # Uploading an image file
+    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-    if image_url:
-        try:
-            # Fetch the image from the URL with a timeout
-            response = requests.get(image_url, timeout=5)  # Set timeout to 5 seconds
-            response.raise_for_status()  # Check for HTTP errors
+    if uploaded_file is not None:
+        # Read the image using OpenCV
+        file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+        image = cv2.imdecode(file_bytes, 1)
 
-            # Convert the response content to a NumPy array
-            file_bytes = np.asarray(bytearray(response.content), dtype=np.uint8)
-            image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+        # Process the image with the display function
+        output = display(image)
 
-            # Process the image with the display function
-            output = display(image)
-
-            # Display the original and processed images using OpenCV
-            st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
-            st.image(output, caption='Processed Image', use_column_width=True)
-
-        except requests.exceptions.RequestException as e:
-            st.error(f"An error occurred while fetching the image: {e}")
+        # Display the original and processed images using OpenCV
+        st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
+        st.image(output, caption='Processed Image', use_column_width=True)
 
 if __name__ == "__main__":
     main()
