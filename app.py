@@ -86,23 +86,15 @@ def display(inp):
         copy_image = cv2.rectangle(copy_image,(y_min, x_min),(y_max, x_max),(0,0,255),2)
         copy_image = cv2.putText(copy_image,str(result[i+size]),(y_min, x_min),cv2.FONT_HERSHEY_SIMPLEX,1,(255,0,0),1,cv2.LINE_AA)
     return copy_image
+from scipy.ndimage import binary_hit_or_miss
+# Vectorized version using binary hit-or-miss with SciPy's ndimage
 def hit_miss(inp, element):
-    output = inp.copy()
-    for i in range(1, output.shape[0]-1):
-        for j in range(1, output.shape[1]-1):
-            arr = inp[i-1:i+2,j-1:j+2]
-            tmp = element.copy()
-            tmp[arr==-1]=-1
-            if np.array_equal(tmp, arr):
-                output[i][j] = 1
-            else:
-                output[i][j] = 0
-    return output
+    return binary_hit_or_miss(inp, structure1=element)
 def thin(inp, element):
     output = inp.copy()
-    tmp = output - hit_miss(output, element)
-    tmp[tmp<0]=0
-    return tmp
+    hit_miss_result = hit_miss(output, element)
+    output[hit_miss_result] = 0  # Set positions that match the hit-miss template to 0
+    return output
 def convert_thin(inp):
     output = inp.copy()
     for i in range(128):
