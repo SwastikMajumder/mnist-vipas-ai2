@@ -199,7 +199,7 @@ def connected(node):
         return []
     
 def main():
-    st.title("Digit Recongnization")
+    st.title("Digit Recognition")
 
     # Uploading an image file
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
@@ -209,12 +209,16 @@ def main():
         file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
         image = cv2.imdecode(file_bytes, 1)
 
-        # Process the image with the display function
-        output = display(image)
-
-        # Display the original and processed images using OpenCV
+        # Display the original image
         st.image(image, channels="BGR", caption='Original Image', use_column_width=True)
-        st.image(output, caption='Processed Image', use_column_width=True)
+
+        # Button for prediction
+        if st.button('Predict'):
+            # Process the image with the display function (digit recognition logic goes here)
+            output = display(image)
+
+            # Display the processed image (or prediction result)
+            st.image(output, caption='Processed Image', use_column_width=True)
 
 if __name__ == "__main__":
     main()
